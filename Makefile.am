@@ -25,7 +25,8 @@ libtofu_la_SOURCES =		\
 	src/rep.c		\
 	src/req.c		\
 	src/tofu.c		\
-	src/backend/fcgi.c
+	src/backend/fcgi.c	\
+	src/backend/zmq.c
 
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/include/tofu
 

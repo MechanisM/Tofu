@@ -9,8 +9,10 @@
 #include "utils/list.h"
 #include "utils/common.h"
 
-tofu_req_t *tofu_req_init(char *method, char *uri) {
+tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
 	tofu_req_t *req = malloc(sizeof(tofu_req_t));
+
+	req -> connid = connid;
 
 	if (strcmp(method, "GET") == 0)
 		req -> method = GET;

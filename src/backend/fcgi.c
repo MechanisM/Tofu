@@ -11,7 +11,6 @@
 #include "../utils/list.h"
 #include "../utils/common.h"
 
-
 void tofu_backend_fcgi_loop(tofu_ctx_t *ctx);
 void tofu_backend_fcgi_send(tofu_rep_t *rep);
 
@@ -26,6 +25,7 @@ tofu_backend_t tofu_backend_fcgi = {
 void tofu_backend_fcgi_loop(tofu_ctx_t *ctx) {
 	while (FCGI_Accept() >= 0) {
 		tofu_req_t *req = tofu_req_init(
+			0,
 			getenv("REQUEST_METHOD"),
 			getenv("REQUEST_URI")
 		);

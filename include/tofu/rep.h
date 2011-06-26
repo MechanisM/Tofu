@@ -1,4 +1,7 @@
 typedef struct {
+	int connid;
+	int status;
+
 	void *headers;
 	void *chunks;
 } tofu_rep_t;

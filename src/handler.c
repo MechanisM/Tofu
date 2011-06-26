@@ -44,7 +44,13 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 
 		if ((req -> method == handle -> method) && compare_url(request_uri, regex, req -> params)) {
 			rep = handle -> callback(req);
+			rep -> connid = req -> connid;
 		}
+
+		/*if (rep == NULL) {
+			rep = malloc(sizeof(tofu_rep_t));
+			rep -> status = 404;
+		}*/
 
 		bstrFree(request_uri);
 		bstrFree(regex);
@@ -130,7 +136,7 @@ static bool compare_url(bstring uri, bstring regex, list_node_t *params) {
 	);
 
 	if (rc == PCRE_ERROR_NOMATCH) {
-		pcre_free(re);
+		/*pcre_free(re);*/
 		return false;
 	}
 

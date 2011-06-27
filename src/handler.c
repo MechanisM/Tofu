@@ -149,7 +149,7 @@ static bstring process_route(bstring route, list_node_t *params) {
 
 		rc = pcre_exec(
 			re, NULL,
-			(const char *) string -> data, blength(string),
+			(const char *) bdata(string), blength(string),
 			start_offset, options,
 			ovector, OVECCOUNT
 		);
@@ -163,7 +163,7 @@ static bstring process_route(bstring route, list_node_t *params) {
 		}
 
 		pcre_get_substring(
-			(const char *) string -> data,
+			(const char *) bdata(string),
 			ovector, rc, 1, (const char **) &c
 		);
 
@@ -196,12 +196,12 @@ static bool compare_url(bstring uri, bstring regex, list_node_t *params) {
 	memset(ovector, 0, OVECCOUNT * sizeof(int));
 
 	re = pcre_compile(
-		(const char *) regex -> data, 0,
+		(const char *) bdata(regex), 0,
 		&error, &error_offset, NULL
 	);
 
 	rc = pcre_exec(
-		re, NULL, (const char *) uri -> data,
+		re, NULL, (const char *) bdata(uri),
 		blength(uri), 0, 0, ovector, OVECCOUNT
 	);
 
@@ -215,7 +215,7 @@ static bool compare_url(bstring uri, bstring regex, list_node_t *params) {
 		param = iter -> value;
 
 		pcre_get_substring(
-			(const char *) uri -> data,
+			(const char *) bdata(uri),
 			ovector, rc, i, &c
 		);
 

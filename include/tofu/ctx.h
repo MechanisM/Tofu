@@ -36,6 +36,7 @@
 typedef struct {
 	int   backend;
 	void *handlers;
+	void *rescuers;
 	char **backend_opts;
 } tofu_ctx_t;
 

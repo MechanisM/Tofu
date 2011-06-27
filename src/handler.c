@@ -52,12 +52,17 @@ typedef struct {
 	tofu_rep_t *(*callback)(tofu_req_t *req);
 } tofu_handler_t;
 
+typedef struct {
+	int error;
+	tofu_rep_t *(*callback)(tofu_req_t *req);
+} tofu_rescuer_t;
+
 #define OVECCOUNT 30
 
 static bstring process_route(bstring route, list_node_t *params);
 static bool compare_url(bstring uri, bstring regex, list_node_t *params);
 
-void tofu_handler_add(tofu_ctx_t *ctx, int method, const char *route, tofu_rep_t *(*callback)(tofu_req_t *req)) {
+void tofu_handle_with(tofu_ctx_t *ctx, int method, const char *route, tofu_rep_t *(*callback)(tofu_req_t *req)) {
 	tofu_handler_t *handle = malloc(sizeof(tofu_handler_t));
 
 	handle -> method   = method;
@@ -67,29 +72,54 @@ void tofu_handler_add(tofu_ctx_t *ctx, int method, const char *route, tofu_rep_t
 	list_insert_tail(ctx -> handlers, (void *) handle);
 }
 
+void tofu_rescue_with(tofu_ctx_t *ctx, int error, tofu_rep_t *(*callback)(tofu_req_t *req)) {
+	tofu_rescuer_t *rescue = malloc(sizeof(tofu_rescuer_t));
+
+	rescue -> error    = error;
+	rescue -> callback = callback;
+
+	list_insert_tail(ctx -> rescuers, (void *) rescue);
+}
+
 tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 	list_node_t *iter;
 	bstring request_uri;
 	tofu_rep_t *rep = NULL;
 
-	list_foreach(iter, ctx -> handlers) {
-		request_uri = cstr2bstr(req -> uri);
-		tofu_handler_t *handle = iter -> value;
-		bstring regex = process_route(handle -> route, req -> params);
+	if (req -> error != 0) {
+		list_foreach(iter, ctx -> rescuers) {
+			tofu_rescuer_t *rescue = iter -> value;
 
-		if ((req -> method == handle -> method) && compare_url(request_uri, regex, req -> params)) {
-			rep = handle -> callback(req);
-			rep -> connid = req -> connid;
+			if (req -> error == rescue -> error)
+				rep = rescue -> callback(req);
+		}
+	} else {
+		list_foreach(iter, ctx -> handlers) {
+			request_uri = cstr2bstr(req -> uri);
+			tofu_handler_t *handle = iter -> value;
+			bstring regex = process_route(handle -> route, req -> params);
+
+			if ((req -> method == handle -> method) &&
+				compare_url(request_uri, regex, req -> params))
+
+				rep = handle -> callback(req);
+
+			bstrFree(request_uri);
+			bstrFree(regex);
 		}
 
-		/*if (rep == NULL) {
-			rep = malloc(sizeof(tofu_rep_t));
-			rep -> status = 404;
-		}*/
+		if (rep == NULL) {
+			int error = 404;
+			list_foreach(iter, ctx -> rescuers) {
+				tofu_rescuer_t *rescue = iter -> value;
 
-		bstrFree(request_uri);
-		bstrFree(regex);
+				if (error == rescue -> error)
+					rep = rescue -> callback(req);
+			}
+		}
 	}
+
+	rep -> connid = req -> connid;
 
 	return rep;
 }

@@ -127,11 +127,6 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 
 	char *recv_ident = ctx -> backend_opts[1];
 
-	if (rep == NULL) {
-		printf("Not found!!\n");
-		return;
-	}
-
 	list_foreach(iter, rep -> chunks) {
 		char *chunk = iter -> value;
 		bstring bchunk = cstr2bstr(chunk);
@@ -213,15 +208,12 @@ static tofu_req_t *mongrel2tofu(char *tnetstr) {
 	body = bmidstr(str, stok, body_len);
 
 	root = json_loads(bdata(headers), 0, &error);
-	free(headers);
 
 	obj = json_object_get(root, "METHOD");
 	method = json_string_value(obj);
 
 	obj = json_object_get(root, "URI");
 	uri = json_string_value(obj);
-
-	assert(method != NULL);
 
 	req = tofu_req_init(connid, method, uri);
 

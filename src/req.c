@@ -47,7 +47,16 @@
 tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
 	tofu_req_t *req = malloc(sizeof(tofu_req_t));
 
+	req -> error  = 0;
 	req -> connid = connid;
+	req -> params = list_init();
+
+	if ((method == NULL) || uri == NULL) {
+		req -> error = 500;
+		return req;
+	}
+
+	req -> uri    = strdup(uri);
 
 	if (strcmp(method, "GET") == 0)
 		req -> method = GET;
@@ -57,11 +66,8 @@ tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
 		req -> method = PUT;
 	else if (strcmp(method, "DELETE") == 0)
 		req -> method = DELETE;
-	else ;
-		/* error */
-
-	req -> uri    = strdup(uri);
-	req -> params = list_init();
+	else
+		req -> error = 400;
 
 	return req;
 }

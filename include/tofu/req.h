@@ -41,6 +41,7 @@
 typedef struct {
 	int connid;
 	int method;
+	int error;
 
 	char *uri;
 	char *headers;

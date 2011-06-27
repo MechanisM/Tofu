@@ -79,8 +79,7 @@ void tofu_backend_fcgi_loop(tofu_ctx_t *ctx) {
 void tofu_backend_fcgi_send(tofu_rep_t *rep) {
 	list_node_t *iter;
 
-	if (rep == NULL)
-		return;
+	printf("Status: %d MSG\n", rep -> status);
 
 	list_foreach(iter, rep -> headers) {
 		tofu_pair_t *header = iter -> value;

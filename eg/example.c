@@ -72,7 +72,7 @@ int main() {
 		"tcp://127.0.0.1:9998", "b0541e27-9e77-48c1-80ef-24819ae3a97b"
 	};
 
-	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_BACKEND_ZMQ, opts);
+	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_BACKEND_FCGI, opts);
 
 	tofu_handle_with(ctx, GET, "/lol/:ciao", lol_handler);
 	tofu_handle_with(ctx, GET, "/mao/:ciao", mao_handler);

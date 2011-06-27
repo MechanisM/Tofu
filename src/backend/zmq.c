@@ -142,13 +142,11 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 		connid_len = log10(rep -> connid) + 1;
 
 	resp = bformat(
-		"%s %d:%d, HTTP/1.1 200 OK\r\n%s%s: %d\n\n%s",
-		recv_ident, (int) connid_len, rep -> connid,
+		"%s %d:%d, HTTP/1.1 %d MSG\r\n%s%s: %d\n\n%s",
+		recv_ident, (int) connid_len, rep -> connid, rep -> status,
 		headers -> data, "Content-Length", blength(body),
 		body -> data
 	);
-
-	printf(bdata(resp));
 
 	zmq_msg_init_data(&msg, bdata(resp), blength(resp), NULL, NULL);
 	zmq_send(send, &msg, 0);

@@ -93,6 +93,8 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 			if (req -> error == rescue -> error)
 				rep = rescue -> callback(req);
 		}
+
+		rep -> status = req -> error;
 	} else {
 		list_foreach(iter, ctx -> handlers) {
 			request_uri = cstr2bstr(req -> uri);
@@ -100,9 +102,11 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 			bstring regex = process_route(handle -> route, req -> params);
 
 			if ((req -> method == handle -> method) &&
-				compare_url(request_uri, regex, req -> params))
+				compare_url(request_uri, regex, req -> params)) {
 
 				rep = handle -> callback(req);
+				rep -> status = 200;
+			}
 
 			bstrFree(request_uri);
 			bstrFree(regex);
@@ -113,8 +117,10 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 			list_foreach(iter, ctx -> rescuers) {
 				tofu_rescuer_t *rescue = iter -> value;
 
-				if (error == rescue -> error)
+				if (error == rescue -> error) {
 					rep = rescue -> callback(req);
+					rep -> status = error;
+				}
 			}
 		}
 	}

@@ -40,7 +40,6 @@
 #include "req.h"
 
 #include "bstring/bstrlib.h"
-#include "bstring/bstraux.h"
 
 #include "utils/list.h"
 
@@ -80,7 +79,7 @@ void tofu_ctx_free(tofu_ctx_t *ctx) {
 			tofu_handler_t *handle = iter -> value;
 			bstring route = handle -> route;
 
-			bstrFree(route);
+			bdestroy(route);
 
 			free(handle);
 			free(iter);

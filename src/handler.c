@@ -41,7 +41,6 @@
 #include "handler.h"
 
 #include "bstring/bstrlib.h"
-#include "bstring/bstraux.h"
 
 #include "utils/list.h"
 #include "utils/common.h"
@@ -108,8 +107,8 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 				rep -> status = 200;
 			}
 
-			bstrFree(request_uri);
-			bstrFree(regex);
+			bdestroy(request_uri);
+			bdestroy(regex);
 		}
 
 		if (rep == NULL) {
@@ -180,7 +179,7 @@ static bstring process_route(bstring route, list_node_t *params) {
 
 	binsertch(string, 0, 1, '^');
 
-	bstrFree(replace);
+	bdestroy(replace);
 	pcre_free(re);
 
 	return string;

@@ -14,11 +14,9 @@ HEADERS_noinst =		\
 	src/backend.h		\
 	src/utils/list.h	\
 	src/utils/common.h	\
-	src/bstring/bstraux.h	\
 	src/bstring/bstrlib.h
 
 libtofu_la_SOURCES =		\
-	src/bstring/bstraux.c	\
 	src/bstring/bstrlib.c	\
 	src/ctx.c		\
 	src/handler.c		\

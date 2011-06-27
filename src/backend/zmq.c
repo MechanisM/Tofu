@@ -50,7 +50,6 @@
 #include "../backend.h"
 
 #include "../bstring/bstrlib.h"
-#include "../bstring/bstraux.h"
 
 #include "../utils/list.h"
 #include "../utils/common.h"
@@ -128,14 +127,14 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 		bstring bchunk = cstr2bstr(chunk);
 
 		bconcat(body, bchunk);
-		bstrFree(bchunk);
+		bdestroy(bchunk);
 	}
 
 	list_foreach(iter, rep -> headers) {
 		tofu_pair_t *header = iter -> value;
 		bstring head = bformat("%s: %s\n", header -> name, header -> value);
 		bconcat(headers, head);
-		bstrFree(head);
+		bdestroy(head);
 	}
 
 	if (rep -> connid != 0)
@@ -152,9 +151,9 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 	zmq_send(send, &msg, 0);
 	zmq_msg_close(&msg);
 
-	bstrFree(resp);
-	bstrFree(body);
-	bstrFree(headers);
+	bdestroy(resp);
+	bdestroy(body);
+	bdestroy(headers);
 }
 
 static tofu_req_t *mongrel2tofu(char *tnetstr) {
@@ -223,14 +222,14 @@ static tofu_req_t *mongrel2tofu(char *tnetstr) {
 	json_decref(root);
 	json_decref(obj);
 
-	bstrFree(str);
-	bstrFree(uuid);
-	bstrFree(id);
-	bstrFree(path);
-	bstrFree(headerl);
-	bstrFree(headers);
-	bstrFree(bodyl);
-	bstrFree(body);
+	bdestroy(str);
+	bdestroy(uuid);
+	bdestroy(id);
+	bdestroy(path);
+	bdestroy(headerl);
+	bdestroy(headers);
+	bdestroy(bodyl);
+	bdestroy(body);
 
 	return req;
 }

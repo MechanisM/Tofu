@@ -39,7 +39,6 @@
 #include "req.h"
 
 #include "bstring/bstrlib.h"
-#include "bstring/bstraux.h"
 
 #include "utils/list.h"
 #include "utils/common.h"

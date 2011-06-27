@@ -1,0 +1,7 @@
+* Fix random-crash-bug in zmq backend (may be caused by jansson) !!!
+* Add support for backend configuration
+* Add support for error handlers (to be used only in tofu_dispatch())
+* Add support to templating (via Amaca?)
+* Add printf-like response functions (tofu_writef()?)
+* Add documentation
+* ...

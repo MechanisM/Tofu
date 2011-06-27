@@ -35,7 +35,12 @@ tofu_rep_t *mao_handler(tofu_req_t *req) {
 }
 
 int main() {
-	tofu_ctx_t *ctx = tofu_ctx_init(1);
+	char *opts[] = {
+		"tcp://127.0.0.1:9999", "54c6755b-9628-40a4-9a2d-cc82a816345e",
+		"tcp://127.0.0.1:9998", "b0541e27-9e77-48c1-80ef-24819ae3a97b"
+	};
+
+	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_BACKEND_ZMQ, opts);
 
 	tofu_handler_add(ctx, GET, "/lol/:ciao", lol_handler);
 	tofu_handler_add(ctx, GET, "/mao/:ciao", mao_handler);

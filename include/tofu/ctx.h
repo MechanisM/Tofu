@@ -34,8 +34,9 @@
  */
 
 typedef struct {
-	void *handlers;
 	int   backend;
+	void *handlers;
+	char **backend_opts;
 } tofu_ctx_t;
 
 tofu_ctx_t *tofu_ctx_init();

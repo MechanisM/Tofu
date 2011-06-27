@@ -41,9 +41,19 @@
 #include "backend.h"
 
 void tofu_loop(tofu_ctx_t *ctx) {
+	tofu_backend_t backend;
 	extern tofu_backend_t tofu_backend_fcgi;
 	extern tofu_backend_t tofu_backend_zmq;
 
-	tofu_backend_zmq.loop(ctx);
+	switch (ctx -> backend) {
+		case BACKEND_FCGI:
+			backend = tofu_backend_fcgi;
+			break;
+		case BACKEND_ZMQ:
+			backend = tofu_backend_zmq;
+			break;
+	}
+
+	backend.loop(ctx);
 }
 

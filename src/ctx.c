@@ -50,11 +50,12 @@ typedef struct {
 	tofu_rep_t *(*callback)(tofu_req_t *req);
 } tofu_handler_t;
 
-tofu_ctx_t *tofu_ctx_init(int backend) {
+tofu_ctx_t *tofu_ctx_init(int backend, char *opts[]) {
 	tofu_ctx_t *ctx = malloc(sizeof(tofu_ctx_t));
 
-	ctx -> handlers = list_init();
-	ctx -> backend  = backend;
+	ctx -> handlers     = list_init();
+	ctx -> backend      = backend;
+	ctx -> backend_opts = opts;
 
 	return ctx;
 }

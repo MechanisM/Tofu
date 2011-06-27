@@ -33,6 +33,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <math.h>
+
 #include <zmq.h>
 #include <stdlib.h>
 #include <string.h>
@@ -54,36 +56,36 @@
 #include "../utils/common.h"
 
 void tofu_backend_zmq_loop(tofu_ctx_t *ctx);
-void tofu_backend_zmq_send(tofu_rep_t *rep);
 
 tofu_backend_t tofu_backend_zmq = {
 	.id   = BACKEND_ZMQ,
 	.name = "zmq",
 
 	.loop = tofu_backend_zmq_loop,
-	.send = tofu_backend_zmq_send,
 };
 
+static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send);
 static tofu_req_t *mongrel2tofu(char *tnetstr);
 static void zmq_bstr_free(void *data, void *bstr);
-
-static char *recv_spec  = "tcp://127.0.0.1:9999";
-static char *recv_ident = "54c6755b-9628-40a4-9a2d-cc82a816345e";
-
-static char *send_spec  = "tcp://127.0.0.1:9998";
-static char *send_ident = "b0541e27-9e77-48c1-80ef-24819ae3a97b";
 
 void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 	zmq_pollitem_t items[1];
 	void *zmq_ctx = zmq_init(1);
 
-	void *recv = zmq_socket(zmq_ctx, ZMQ_PULL);
+	char *recv_spec  = ctx -> backend_opts[0];
+	char *recv_ident = ctx -> backend_opts[1];
 
-	char *recv_spec  = "tcp://127.0.0.1:9999";
-	char *recv_ident = "54c6755b-9628-40a4-9a2d-cc82a816345e";
+	char *send_spec  = ctx -> backend_opts[2];
+	char *send_ident = ctx -> backend_opts[3];
+
+	void *recv = zmq_socket(zmq_ctx, ZMQ_PULL);
+	void *send = zmq_socket(zmq_ctx, ZMQ_PUB);
 
 	zmq_connect(recv, recv_spec);
 	zmq_setsockopt(recv, ZMQ_IDENTITY, recv_ident, strlen(recv_ident));
+
+	zmq_connect(send, send_spec);
+	zmq_setsockopt(send, ZMQ_IDENTITY, send_ident, strlen(send_ident));
 
 	items[0].socket = recv;
 	items[0].events = ZMQ_POLLIN;
@@ -104,41 +106,26 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 
 			req = mongrel2tofu(tnetstr);
 			rep = tofu_dispatch(ctx, req);
-			tofu_backend_zmq_send(rep);
+			tofu_backend_zmq_send(ctx, rep, send);
 
 			tofu_rep_free(rep);
 			tofu_req_free(req);
 
-			/*tofu_req_t *req = tofu_req_init(
-				getenv("REQUEST_METHOD"),
-				getenv("REQUEST_URI")
-			);
-
-			tofu_rep_t *rep = tofu_dispatch(ctx, req);
-			tofu_backend_zmq_send(rep);
-
-			tofu_rep_free(rep);
+			/*tofu_rep_free(rep);
 			tofu_req_free(req);
 			free(tnetstr);*/
 		}
 	}
 }
 
-void tofu_backend_zmq_send(tofu_rep_t *rep) {
+static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) {
+	zmq_msg_t msg;
+	list_node_t *iter;
 	bstring resp    = cstr2bstr("");
 	bstring body    = cstr2bstr("");
 	bstring headers = cstr2bstr("");
-	list_node_t *iter;
 
-	zmq_msg_t msg;
-	void *zmq_ctx = zmq_init(1);
-	void *send = zmq_socket(zmq_ctx, ZMQ_PUB);
-
-	char *send_spec  = "tcp://127.0.0.1:9998";
-	char *send_ident = "b0541e27-9e77-48c1-80ef-24819ae3a97b";
-
-	zmq_connect(send, send_spec);
-	zmq_setsockopt(send, ZMQ_IDENTITY, send_ident, strlen(send_ident));
+	char *recv_ident = ctx -> backend_opts[1];
 
 	if (rep == NULL) {
 		printf("Not found!!\n");
@@ -160,7 +147,12 @@ void tofu_backend_zmq_send(tofu_rep_t *rep) {
 		bstrFree(head);
 	}
 
-	resp = bformat("%s 2:%d, HTTP/1.1 200 OK\r\n%s%s: %d\n\n%s", recv_ident, rep -> connid, headers -> data, "Content-Length", blength(body), body -> data);
+	resp = bformat(
+		"%s %d:%d, HTTP/1.1 200 OK\r\n%s%s: %d\n\n%s",
+		recv_ident, (int) log10(rep -> connid) + 1, rep -> connid,
+		headers -> data, "Content-Length", blength(body),
+		body -> data
+	);
 
 	zmq_msg_init_data(&msg, bdata(resp), blength(resp), zmq_bstr_free, resp);
 	zmq_send(send, &msg, 0);
@@ -175,7 +167,7 @@ static tofu_req_t *mongrel2tofu(char *tnetstr) {
 	bstring bodyl, body;
 
 	tofu_req_t *req;
-	char *method, *uri;
+	const char *method, *uri;
 
 	struct tagbstring space = bsStatic(" ");
 	struct tagbstring colon = bsStatic(":");

@@ -64,9 +64,8 @@ tofu_backend_t tofu_backend_zmq = {
 	.loop = tofu_backend_zmq_loop,
 };
 
-static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send);
 static tofu_req_t *mongrel2tofu(char *tnetstr);
-static void zmq_bstr_free(void *data, void *bstr);
+static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send);
 
 void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 	zmq_pollitem_t items[1];
@@ -90,9 +89,7 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 	items[0].socket = recv;
 	items[0].events = ZMQ_POLLIN;
 
-	while (1) {
-		int rc = zmq_poll(items, 1, 100000);
-
+	while (zmq_poll(items, 1, 100000) >= 0) {
 		if (items[0].revents == ZMQ_POLLIN) {
 			zmq_msg_t msg;
 			tofu_req_t *req;
@@ -102,7 +99,6 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 			zmq_msg_init(&msg);
 			zmq_recv(recv, &msg, ZMQ_RCVMORE);
 			tnetstr = zmq_msg_data(&msg);
-			zmq_msg_close(&msg);
 
 			req = mongrel2tofu(tnetstr);
 			rep = tofu_dispatch(ctx, req);
@@ -111,9 +107,8 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 			tofu_rep_free(rep);
 			tofu_req_free(req);
 
-			/*tofu_rep_free(rep);
-			tofu_req_free(req);
-			free(tnetstr);*/
+			/*free(tnetstr);*/
+			zmq_msg_close(&msg);
 		}
 	}
 }
@@ -121,7 +116,8 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) {
 	zmq_msg_t msg;
 	list_node_t *iter;
-	bstring resp    = cstr2bstr("");
+	int connid_len = 1;
+	bstring resp;
 	bstring body    = cstr2bstr("");
 	bstring headers = cstr2bstr("");
 
@@ -142,16 +138,25 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 		bstrFree(head);
 	}
 
+	if (rep -> connid != 0)
+		connid_len = log10(rep -> connid) + 1;
+
 	resp = bformat(
 		"%s %d:%d, HTTP/1.1 200 OK\r\n%s%s: %d\n\n%s",
-		recv_ident, (int) log10(rep -> connid) + 1, rep -> connid,
+		recv_ident, (int) connid_len, rep -> connid,
 		headers -> data, "Content-Length", blength(body),
 		body -> data
 	);
 
-	zmq_msg_init_data(&msg, bdata(resp), blength(resp), zmq_bstr_free, resp);
+	printf(bdata(resp));
+
+	zmq_msg_init_data(&msg, bdata(resp), blength(resp), NULL, NULL);
 	zmq_send(send, &msg, 0);
 	zmq_msg_close(&msg);
+
+	bstrFree(resp);
+	bstrFree(body);
+	bstrFree(headers);
 }
 
 static tofu_req_t *mongrel2tofu(char *tnetstr) {
@@ -217,6 +222,9 @@ static tofu_req_t *mongrel2tofu(char *tnetstr) {
 
 	req = tofu_req_init(connid, method, uri);
 
+	json_decref(root);
+	json_decref(obj);
+
 	bstrFree(str);
 	bstrFree(uuid);
 	bstrFree(id);
@@ -227,9 +235,4 @@ static tofu_req_t *mongrel2tofu(char *tnetstr) {
 	bstrFree(body);
 
 	return req;
-}
-
-static void zmq_bstr_free(void *data, void *bstrv) {
-	bstring bstr = bstrv;
-	bstrFree(bstr);
 }

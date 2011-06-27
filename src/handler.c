@@ -201,7 +201,7 @@ static bool compare_url(bstring uri, bstring regex, list_node_t *params) {
 	);
 
 	if (rc == PCRE_ERROR_NOMATCH) {
-		/*pcre_free(re);*/
+		pcre_free(re);
 		return false;
 	}
 

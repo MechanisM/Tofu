@@ -108,9 +108,9 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	else if (evhttp_request_get_command(evreq) == EVHTTP_REQ_POST)
 		method = "POST";
 	else if (evhttp_request_get_command(evreq) == EVHTTP_REQ_PUT)
-		method = "POST";
+		method = "PUT";
 	else if (evhttp_request_get_command(evreq) == EVHTTP_REQ_DELETE)
-		method = "POST";
+		method = "DELETE";
 
 	decoded = evhttp_uri_parse(uri);
 
@@ -122,7 +122,7 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	path = evhttp_uri_get_path(decoded);
 	decoded_path = evhttp_uridecode(path, 0, NULL);
 
-	req = tofu_req_init(0, "GET", decoded_path);
+	req = tofu_req_init(0, method, decoded_path);
 	rep = tofu_dispatch(ctx, req);
 
 	evb = evbuffer_new();

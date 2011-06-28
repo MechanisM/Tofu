@@ -21,6 +21,7 @@ AC_PROG_LN_S
 
 AC_ARG_ENABLE(fcgi, [  --enable-fcgi           build fcgi backend [[default=yes]]],, enable_fcgi=yes)
 AC_ARG_ENABLE(zmq,  [  --enable-zmq            build zmq backend  [[default=no]]],, enable_zmq=no)
+AC_ARG_ENABLE(zmq,  [  --enable-evhttp         build evhttp backend  [[default=no]]],, enable_evhttp=no)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h],, AC_MSG_ERROR(stdlib missing.))

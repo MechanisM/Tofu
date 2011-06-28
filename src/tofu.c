@@ -42,8 +42,10 @@
 
 void tofu_loop(tofu_ctx_t *ctx) {
 	tofu_backend_t backend;
+
 	extern tofu_backend_t tofu_backend_fcgi;
 	extern tofu_backend_t tofu_backend_zmq;
+	extern tofu_backend_t tofu_backend_evhttp;
 
 	switch (ctx -> backend) {
 		case BACKEND_FCGI:
@@ -51,6 +53,9 @@ void tofu_loop(tofu_ctx_t *ctx) {
 			break;
 		case BACKEND_ZMQ:
 			backend = tofu_backend_zmq;
+			break;
+		case BACKEND_EVHTTP:
+			backend = tofu_backend_evhttp;
 			break;
 	}
 

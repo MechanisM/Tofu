@@ -24,12 +24,13 @@ libtofu_la_SOURCES =		\
 	src/req.c		\
 	src/tofu.c		\
 	src/backend/fcgi.c	\
-	src/backend/zmq.c
+	src/backend/zmq.c	\
+	src/backend/evhttp.c
 
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/include/tofu
 
 libtofu_la_CFLAGS = -Wall -O3 -fomit-frame-pointer
-libtofu_la_LDFLAGS = -version-info @LTVER@  -lpcre -lfcgi -lzmq -ljansson
+libtofu_la_LDFLAGS = -version-info @LTVER@  -lpcre -lfcgi -lzmq -ljansson -levent
 
 bin_PROGRAMS = tofu_example
 tofu_example_LDADD = libtofu.la

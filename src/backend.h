@@ -35,6 +35,7 @@
 
 #define BACKEND_FCGI	0
 #define BACKEND_ZMQ	1
+#define BACKEND_EVHTTP	2
 
 typedef struct {
 	int id;

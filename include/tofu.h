@@ -40,5 +40,6 @@
 
 #define TOFU_BACKEND_FCGI	0
 #define TOFU_BACKEND_ZMQ	1
+#define TOFU_BACKEND_EVHTTP	2
 
 void tofu_loop(tofu_ctx_t *ctx);

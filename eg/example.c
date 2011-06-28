@@ -5,14 +5,17 @@ tofu_rep_t *lol_handler(tofu_req_t *req) {
 
 	tofu_head(rep, "Content-Type", "text/html");
 
-	tofu_write(rep, "<!DOCTYPE html>\n");
+	/*tofu_write(rep, "<!DOCTYPE html>\n");
 	tofu_write(rep, "<head>\n");
 	tofu_write(rep, "<title>Ciao</title>\n");
 	tofu_write(rep, "</head>\n");
 	tofu_write(rep, "<body>\n");
 	tofu_write(rep, "ciao \n");
 	tofu_write(rep, tofu_param(req, "ciao"));
-	tofu_write(rep, "</body>\n");
+	tofu_write(rep, "</body>\n");*/
+
+	tofu_write(rep, "<!DOCTYPE html>\n<head><title>Ciao</title></head>\n");
+	tofu_writef(rep, "<body>ciao %s</body>\n", tofu_param(req, "ciao"));
 
 	return rep;
 }
@@ -72,7 +75,7 @@ int main() {
 		"tcp://127.0.0.1:9998", "b0541e27-9e77-48c1-80ef-24819ae3a97b"
 	};
 
-	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_BACKEND_FCGI, opts);
+	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_BACKEND_ZMQ, opts);
 
 	tofu_handle_with(ctx, GET, "/lol/:ciao", lol_handler);
 	tofu_handle_with(ctx, GET, "/mao/:ciao", mao_handler);

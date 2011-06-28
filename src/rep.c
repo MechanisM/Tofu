@@ -38,6 +38,8 @@
 
 #include "rep.h"
 
+#include "bstring/bstrlib.h"
+
 #include "utils/list.h"
 #include "utils/common.h"
 
@@ -79,6 +81,17 @@ void tofu_rep_free(tofu_rep_t *rep) {
 
 void tofu_write(tofu_rep_t *rep, const char *chunk) {
 	list_insert_tail(rep -> chunks, (void *) chunk);
+}
+
+void tofu_writef(tofu_rep_t *rep, const char *fmt, ...) {
+	int ret;
+	bstring b = bfromcstr("");
+
+	bvformata(ret, b , fmt, fmt);
+
+	list_insert_tail(rep -> chunks, (void *) strdup(bdata(b)));
+
+	bdestroy(b);
 }
 
 void tofu_head(tofu_rep_t *rep, const char *field, const char *value) {

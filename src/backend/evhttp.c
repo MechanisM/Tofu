@@ -135,8 +135,6 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 		);
 	}
 
-	evbuffer_add(evb, "\n", 1);
-
 	list_foreach(iter, rep -> chunks) {
 		const char *chunk = iter -> value;
 		evbuffer_add(evb, chunk, strlen(chunk));

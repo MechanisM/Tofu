@@ -51,14 +51,14 @@ tofu_rep_t *tofu_rep_init() {
 }
 
 void tofu_rep_free(tofu_rep_t *rep) {
-	list_node_t *iter;
+	list_node_t *iter, *safe;
 
 	if (rep == NULL)
 		return;
 
 	list_destroy(rep -> chunks);
 
-	list_reverse_foreach(iter, rep -> headers) {
+	list_reverse_foreach_safe(iter, safe, rep -> headers) {
 		iter -> prev -> next = iter -> next;
 		iter -> next -> prev = iter -> prev;
 

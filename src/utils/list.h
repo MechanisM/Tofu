@@ -178,6 +178,28 @@ static inline void list_destroy(list_node_t *l);
 	for (ITEM = list_head(L); ITEM != L; ITEM = ITEM -> next)
 
 /**
+ * list_foreach_safe - iterate the whole list safe against removal of list entries
+ * @param item The temporary item used as iterator
+ * @param safe Another temporary item used as temporary storage
+ * @param l The list to iterate
+ *
+ * This function iterates the given list from the head to the tail safe against
+ * removal of list entries.
+ *
+ * Example:
+ *
+ *    list_node_t *iter;
+ *
+ *    list_foreach_safe(iter, safe, l) {
+ *      ...
+ *    }
+ *
+ */
+
+#define list_foreach_safe(ITEM, SAFE, L) \
+	for (ITEM = list_head(L), SAFE = ITEM -> next; ITEM != L; ITEM = SAFE, SAFE = ITEM -> next)
+
+/**
  * list_reverse_foreach - reverse iterate the whole list
  * @param item The temporary item used as iterator
  * @param l The list to iterate
@@ -196,6 +218,28 @@ static inline void list_destroy(list_node_t *l);
 
 #define list_reverse_foreach(ITEM, L) \
 	for (ITEM = list_tail(L); ITEM != L; ITEM = ITEM -> prev)
+
+/**
+ * list_reverse_foreach_safe - reverse iterate the whole list safe against removal of list entries
+ * @param item The temporary item used as iterator
+ * @param safe Another temporary item used as temporary storage
+ * @param l The list to iterate
+ *
+ * This macro iterates the given list from the tail to the head, safe against
+ * removal of list entries.
+ *
+ * Example:
+ *
+ *    list_node_t *iter;
+ *
+ *    list_reverse_foreach(iter, l) {
+ *      ...
+ *    }
+ *
+ */
+
+#define list_reverse_foreach_safe(ITEM, SAFE, L) \
+	for (ITEM = list_tail(L), SAFE = ITEM -> prev; ITEM != L; ITEM = SAFE, SAFE = ITEM -> prev)
 
 /**
  * list_append - append one list to onether
@@ -272,9 +316,9 @@ static inline void list_remove(list_node_t *l) {
 }
 
 static inline void list_destroy(list_node_t *l) {
-	list_node_t *iter;
+	list_node_t *iter, *safe;
 
-	list_reverse_foreach(iter, l) {
+	list_reverse_foreach_safe(iter, safe, l) {
 		list_remove(iter);
 	}
 

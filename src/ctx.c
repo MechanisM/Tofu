@@ -66,12 +66,12 @@ tofu_ctx_t *tofu_ctx_init(int backend, char *opts[]) {
 }
 
 void tofu_ctx_free(tofu_ctx_t *ctx) {
-	list_node_t *iter;
+	list_node_t *iter, *safe;
 
 	if (ctx == NULL)
 		return;
 
-	list_reverse_foreach(iter, ctx -> handlers) {
+	list_reverse_foreach_safe(iter, safe, ctx -> handlers) {
 		iter -> prev -> next = iter -> next;
 		iter -> next -> prev = iter -> prev;
 
@@ -87,7 +87,20 @@ void tofu_ctx_free(tofu_ctx_t *ctx) {
 	}
 
 	free(ctx -> handlers);
-	list_destroy(ctx -> rescuers);
+
+	list_reverse_foreach_safe(iter, safe, ctx -> rescuers) {
+		iter -> prev -> next = iter -> next;
+		iter -> next -> prev = iter -> prev;
+
+		if (!list_is_empty(iter)) {
+			tofu_rescuer_t *rescue = iter -> value;
+
+			free(rescue);
+			free(iter);
+		}
+	}
+
+	free(ctx -> rescuers);
 
 	free(ctx);
 }

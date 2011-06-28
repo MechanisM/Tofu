@@ -72,12 +72,12 @@ tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
 }
 
 void tofu_req_free(tofu_req_t *req) {
-	list_node_t *iter;
+	list_node_t *iter, *safe;
 
 	if (req == NULL)
 		return;
 
-	list_reverse_foreach(iter, req -> params) {
+	list_reverse_foreach_safe(iter, safe, req -> params) {
 		iter -> prev -> next = iter -> next;
 		iter -> next -> prev = iter -> prev;
 

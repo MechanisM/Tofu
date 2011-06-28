@@ -87,8 +87,6 @@ void tofu_req_free(tofu_req_t *req) {
 			bstring value = param -> value;
 
 			free(name);
-			/*free(value);*/
-
 			free(param);
 			free(iter);
 		}

@@ -58,8 +58,11 @@ typedef struct {
 
 #define OVECCOUNT 30
 
+static tofu_rep_t *rescu_from_error(tofu_ctx_t *ctx, tofu_req_t *req, int error);
 static bstring process_route(bstring route, list_node_t *params);
 static bool compare_url(bstring uri, bstring regex, list_node_t *params);
+
+static tofu_rep_t *default_error_handler(tofu_req_t *req, int error);
 
 void tofu_handle_with(tofu_ctx_t *ctx, int method, const char *route, tofu_rep_t *(*callback)(tofu_req_t *req)) {
 	tofu_handler_t *handle = malloc(sizeof(tofu_handler_t));
@@ -86,45 +89,67 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 	tofu_rep_t *rep = NULL;
 
 	if (req -> error != 0) {
-		list_foreach(iter, ctx -> rescuers) {
-			tofu_rescuer_t *rescue = iter -> value;
+		rep = rescu_from_error(ctx, req, req -> error);
+		goto ret;
+	}
 
-			if (req -> error == rescue -> error)
-				rep = rescue -> callback(req);
+	list_foreach(iter, ctx -> handlers) {
+		request_uri = cstr2bstr(req -> uri);
+		tofu_handler_t *handle = iter -> value;
+		bstring regex = process_route(handle -> route, req -> params);
+
+		if ((req -> method == handle -> method) &&
+			compare_url(request_uri, regex, req -> params)) {
+
+			rep = handle -> callback(req);
+			rep -> status = 200;
 		}
 
-		rep -> status = req -> error;
-	} else {
-		list_foreach(iter, ctx -> handlers) {
-			request_uri = cstr2bstr(req -> uri);
-			tofu_handler_t *handle = iter -> value;
-			bstring regex = process_route(handle -> route, req -> params);
+		bdestroy(request_uri);
+		bdestroy(regex);
+	}
 
-			if ((req -> method == handle -> method) &&
-				compare_url(request_uri, regex, req -> params)) {
+	if (rep == NULL)
+		rep = rescu_from_error(ctx, req, 404);
 
-				rep = handle -> callback(req);
-				rep -> status = 200;
-			}
+ret:
+	rep -> connid = req -> connid;
+	return rep;
+}
 
-			bdestroy(request_uri);
-			bdestroy(regex);
-		}
+static tofu_rep_t *rescu_from_error(tofu_ctx_t *ctx, tofu_req_t *req, int error) {
+	list_node_t *iter;
+	tofu_rep_t *rep = NULL;
 
-		if (rep == NULL) {
-			int error = 404;
-			list_foreach(iter, ctx -> rescuers) {
-				tofu_rescuer_t *rescue = iter -> value;
+	list_foreach(iter, ctx -> rescuers) {
+		tofu_rescuer_t *rescue = iter -> value;
 
-				if (error == rescue -> error) {
-					rep = rescue -> callback(req);
-					rep -> status = error;
-				}
-			}
+		if (error == rescue -> error) {
+			rep = rescue -> callback(req);
+			rep -> status = error;
 		}
 	}
 
-	rep -> connid = req -> connid;
+	if (rep == NULL)
+		rep = default_error_handler(req, error);
+
+	rep -> status = error;
+	return rep;
+}
+
+static tofu_rep_t *default_error_handler(tofu_req_t *req, int error) {
+	tofu_rep_t *rep = tofu_rep_init();
+
+	tofu_head(rep, "Content-Type", "text/html");
+
+	switch (error) {
+		case 404:
+			tofu_write(rep, "<!DOCTYPE html><head><title>Not Found!</title></head><body><h1>404 - Resource not found!</h1></body></html>\n");
+			break;
+		case 500:
+			tofu_write(rep, "<!DOCTYPE html><head><title>Error!</title></head><body><h1>500 - Internal server error!</h1></body></html>\n");
+			break;
+	}
 
 	return rep;
 }
@@ -227,4 +252,3 @@ static bool compare_url(bstring uri, bstring regex, list_node_t *params) {
 
 	return true;
 }
-

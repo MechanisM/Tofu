@@ -77,7 +77,7 @@ int main() {
 	tofu_handle_with(ctx, GET, "/lol/:ciao", lol_handler);
 	tofu_handle_with(ctx, GET, "/mao/:ciao", mao_handler);
 
-	tofu_rescue_with(ctx, 404, handler_404);
+	/*tofu_rescue_with(ctx, 404, handler_404);*/
 	tofu_rescue_with(ctx, 500, handler_500);
 
 	tofu_loop(ctx);

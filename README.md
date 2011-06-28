@@ -49,7 +49,7 @@ compile and run with:
     $ cc -o hi hi.c -ltofu
     $ ./hi
 
-then visit `http://localhost:8080/hi`.
+then visit [http://0.0.0.0:8080/hi](http://0.0.0.0:8080/hi).
 
 ## OVERVIEW
 

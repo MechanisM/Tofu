@@ -65,7 +65,7 @@ A route pattern can contain one or more tokens (words prefixed by `:`). Each tok
 found in a route pattern is then included in the Tofu request so that it can be
 accessed by the route handler. For example the route `/page/:name` is matched
 against the `/page/index` URI, and the corrispondent handler can fetch the `name`
-paramenter with the 'tofu_param()' function:
+paramenter with the `tofu_param()` function:
 
     char *param = tofu_param(req, "name");
 
@@ -82,14 +82,27 @@ During the initialization phase the application has also to define and initializ
 a Tofu context (`tofu_ctx_t`) which holds all the information needed to run the
 application. The app backend can be chosen in this phase.
 
-## INSTALLATION
+## DEPENDENCIES
 
-Tofu is distributed as source code. Install with:
+ * `libpcre`
+ * `libfcgi` (only for the fcgi backend)
+ * `libevent` (>= 2.0) (only for the evhttp backend)
+ * `libjansson` (only for the zmq backend)
+ * `libzmq` (only for the zmq backend)
 
-    $ git clone git://github.com/AlexBio/Tofu.git && cd Tofu
+## BUILDING
+
+Tofu is distributed as source code. Build with:
+
+    $ git clone git://github.com/AlexBio/Tofu.git
+    $ cd Tofu
     $ ./autogen.sh
     $ ./configure
     $ make
+
+By default all the backends are built. You can disable them by passing one or more
+`--enable-feature=no` options to the configure script. For example, to disable the
+zmq support, pass `--enable-zmq=no`.
 
 ## COPYRIGHT
 

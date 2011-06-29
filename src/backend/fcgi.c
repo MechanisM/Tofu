@@ -83,7 +83,7 @@ void tofu_backend_fcgi_send(tofu_rep_t *rep) {
 	printf("Status: %d %s\n", rep -> status, httpmsg(rep -> status));
 
 	list_foreach(iter, rep -> headers) {
-		tofu_pair_t *header = iter -> value;
+		pair_t *header = iter -> value;
 		printf("%s: %s\n", header -> name, header -> value);
 	}
 

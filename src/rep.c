@@ -66,7 +66,7 @@ void tofu_rep_free(tofu_rep_t *rep) {
 		iter -> next -> prev = iter -> prev;
 
 		if (!list_is_empty(iter)) {
-			tofu_pair_t *header = iter -> value;
+			pair_t *header = iter -> value;
 
 			free(header -> name);
 			free(header -> value);
@@ -96,7 +96,7 @@ void tofu_writef(tofu_rep_t *rep, const char *fmt, ...) {
 }
 
 void tofu_head(tofu_rep_t *rep, const char *field, const char *value) {
-	tofu_pair_t *header = malloc(sizeof(tofu_pair_t));
+	pair_t *header = malloc(sizeof(pair_t));
 
 	header -> name  = (void *) strdup(field);
 	header -> value = (void *) strdup(value);

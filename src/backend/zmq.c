@@ -132,7 +132,7 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 	}
 
 	list_foreach(iter, rep -> headers) {
-		tofu_pair_t *header = iter -> value;
+		pair_t *header = iter -> value;
 		bstring head = bformat("%s: %s\n", header -> name, header -> value);
 		bconcat(headers, head);
 		bdestroy(head);

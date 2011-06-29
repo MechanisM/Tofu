@@ -131,7 +131,7 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	evb = evbuffer_new();
 
 	list_foreach(iter, rep -> headers) {
-		tofu_pair_t *header = iter -> value;
+		pair_t *header = iter -> value;
 		evhttp_add_header(
 			evhttp_request_get_output_headers(evreq),
 			header -> name, header -> value

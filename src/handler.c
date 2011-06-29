@@ -160,7 +160,7 @@ static bstring process_route(bstring route, list_node_t *params) {
 	const char *error;
 	int error_offset, rc;
 
-	tofu_pair_t *param;
+	pair_t *param;
 	int ovector[OVECCOUNT];
 	bstring string = bstrcpy(route);
 	bstring replace = cstr2bstr("(\\w*)");
@@ -195,7 +195,7 @@ static bstring process_route(bstring route, list_node_t *params) {
 
 		breplace(string, ovector[2] - 1, strlen(c) + 1, replace, ' ');
 
-		param = malloc(sizeof(tofu_pair_t));
+		param = malloc(sizeof(pair_t));
 
 		param -> name = strdup(c);
 		list_insert_tail(params, param);
@@ -218,7 +218,7 @@ static bool compare_url(bstring uri, bstring regex, list_node_t *params) {
 	const char *error, *c;
 	int error_offset, rc, i = 0;
 
-	tofu_pair_t *param;
+	pair_t *param;
 	int ovector[OVECCOUNT];
 	memset(ovector, 0, OVECCOUNT * sizeof(int));
 

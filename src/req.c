@@ -82,7 +82,7 @@ void tofu_req_free(tofu_req_t *req) {
 		iter -> next -> prev = iter -> prev;
 
 		if (!list_is_empty(iter)) {
-			tofu_pair_t *param = iter -> value;
+			pair_t *param = iter -> value;
 			bstring name = param -> name;
 			bstring value = param -> value;
 
@@ -101,7 +101,7 @@ char *tofu_param(tofu_req_t *req, const char *name) {
 	list_node_t *iter;
 
 	list_foreach(iter, req -> params) {
-		tofu_pair_t *pair  = iter -> value;
+		pair_t *pair  = iter -> value;
 		char *name_curr  = pair -> name;
 		char *value_curr = pair -> value;
 

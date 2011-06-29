@@ -44,6 +44,7 @@ typedef struct {
 tofu_rep_t *tofu_rep_init();
 void        tofu_rep_free(tofu_rep_t *rep);
 
+void tofu_status(tofu_rep_t *rep, int status);
 void tofu_write(tofu_rep_t *rep, const char *s);
 void tofu_writef(tofu_rep_t *rep, const char *fmt, ...);
 void tofu_head(tofu_rep_t *rep, const char *field, const char *value);

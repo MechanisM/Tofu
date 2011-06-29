@@ -204,6 +204,7 @@ static bstring process_route(bstring route, list_node_t *params) {
 	}
 
 	binsertch(string, 0, 1, '^');
+	binsertch(string, blength(string)+1, 1, '$');
 
 	bdestroy(replace);
 	pcre_free(re);

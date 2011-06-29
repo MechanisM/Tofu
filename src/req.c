@@ -51,7 +51,7 @@ tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
 	req -> params = list_init();
 
 	if ((method == NULL) || uri == NULL) {
-		req -> error = 500;
+		req -> error = 400;
 		return req;
 	}
 

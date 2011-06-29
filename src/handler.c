@@ -102,7 +102,8 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 			compare_url(request_uri, regex, req -> params)) {
 
 			rep = handle -> callback(req);
-			rep -> status = 200;
+			if (rep -> status == 0)
+				rep -> status = 200;
 		}
 
 		bdestroy(request_uri);
@@ -124,16 +125,16 @@ static tofu_rep_t *rescu_from_error(tofu_ctx_t *ctx, tofu_req_t *req, int error)
 	list_foreach(iter, ctx -> rescuers) {
 		tofu_rescuer_t *rescue = iter -> value;
 
-		if (error == rescue -> error) {
+		if (error == rescue -> error)
 			rep = rescue -> callback(req);
-			rep -> status = error;
-		}
 	}
 
 	if (rep == NULL)
 		rep = default_error_handler(req, error);
 
-	rep -> status = error;
+	if (rep -> status == 0)
+		rep -> status = error;
+
 	return rep;
 }
 

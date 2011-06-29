@@ -47,6 +47,7 @@
 #include "../backend.h"
 
 #include "../utils/list.h"
+#include "../utils/http.h"
 #include "../utils/common.h"
 
 void tofu_backend_evhttp_loop(tofu_ctx_t *ctx);
@@ -103,21 +104,23 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	char *uri = evhttp_request_get_uri(evreq);
 	char *method = NULL, *path, *decoded_path;
 
-	if (evhttp_request_get_command(evreq) == EVHTTP_REQ_GET)
-		method = "GET";
-	else if (evhttp_request_get_command(evreq) == EVHTTP_REQ_POST)
-		method = "POST";
-	else if (evhttp_request_get_command(evreq) == EVHTTP_REQ_PUT)
-		method = "PUT";
-	else if (evhttp_request_get_command(evreq) == EVHTTP_REQ_DELETE)
-		method = "DELETE";
+	switch (evhttp_request_get_command(evreq)) {
+		case EVHTTP_REQ_GET:
+			method = "GET";
+			break;
+		case EVHTTP_REQ_POST:
+			method = "POST";
+			break;
+		case EVHTTP_REQ_PUT:
+			method = "PUT";
+			break;
+		case EVHTTP_REQ_DELETE:
+			method = "DELETE";
+			break;
+		default: method = NULL;
+	}
 
 	decoded = evhttp_uri_parse(uri);
-
-	if (!decoded || !method) {
-		evhttp_send_error(evreq, HTTP_BADREQUEST, 0);
-		return;
-	}
 
 	path = evhttp_uri_get_path(decoded);
 	decoded_path = evhttp_uridecode(path, 0, NULL);
@@ -140,7 +143,7 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 		evbuffer_add(evb, chunk, strlen(chunk));
 	}
 
-	evhttp_send_reply(evreq, rep -> status, "MSG", evb);
+	evhttp_send_reply(evreq, rep -> status, httpmsg(rep -> status), evb);
 
 	evhttp_uri_free(decoded);
 	evbuffer_free(evb);

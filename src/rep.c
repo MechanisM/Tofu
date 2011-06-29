@@ -46,6 +46,7 @@
 tofu_rep_t *tofu_rep_init() {
 	tofu_rep_t *rep = malloc(sizeof(tofu_rep_t));
 
+	rep -> status  = 0;
 	rep -> headers = list_init();
 	rep -> chunks  = list_init();
 
@@ -101,4 +102,8 @@ void tofu_head(tofu_rep_t *rep, const char *field, const char *value) {
 	header -> value = (void *) strdup(value);
 
 	list_insert_tail(rep -> headers, (void *) header);
+}
+
+void tofu_status(tofu_rep_t *rep, int status) {
+	rep -> status = status;
 }

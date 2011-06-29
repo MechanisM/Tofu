@@ -44,6 +44,7 @@
 #include "../backend.h"
 
 #include "../utils/list.h"
+#include "../utils/http.h"
 #include "../utils/common.h"
 
 void tofu_backend_fcgi_loop(tofu_ctx_t *ctx);
@@ -79,7 +80,7 @@ void tofu_backend_fcgi_loop(tofu_ctx_t *ctx) {
 void tofu_backend_fcgi_send(tofu_rep_t *rep) {
 	list_node_t *iter;
 
-	printf("Status: %d MSG\n", rep -> status);
+	printf("Status: %d %s\n", rep -> status, httpmsg(rep -> status));
 
 	list_foreach(iter, rep -> headers) {
 		tofu_pair_t *header = iter -> value;

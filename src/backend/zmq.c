@@ -52,6 +52,7 @@
 #include "../bstring/bstrlib.h"
 
 #include "../utils/list.h"
+#include "../utils/http.h"
 #include "../utils/common.h"
 
 void tofu_backend_zmq_loop(tofu_ctx_t *ctx);
@@ -141,8 +142,8 @@ static void tofu_backend_zmq_send(tofu_ctx_t *ctx, tofu_rep_t *rep, void *send) 
 		connid_len = log10(rep -> connid) + 1;
 
 	resp = bformat(
-		"%s %d:%d, HTTP/1.1 %d MSG\r\n%s%s: %d\n\n%s",
-		recv_ident, (int) connid_len, rep -> connid, rep -> status,
+		"%s %d:%d, HTTP/1.1 %d %d\r\n%s%s: %d\n\n%s",
+		recv_ident, (int) connid_len, rep -> connid, rep -> status, httpmsg(rep -> status),
 		bdata(headers), "Content-Length", blength(body), bdata(body)
 	);
 

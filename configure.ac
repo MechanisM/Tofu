@@ -19,9 +19,9 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-AC_ARG_ENABLE(fcgi,   [  --enable-fcgi           build fcgi backend [[default=yes]]],, enable_fcgi=yes)
-AC_ARG_ENABLE(zmq,    [  --enable-zmq            build zmq backend  [[default=no]]],, enable_zmq=yes)
-AC_ARG_ENABLE(evhttp, [  --enable-evhttp         build evhttp backend  [[default=no]]],, enable_evhttp=yes)
+AC_ARG_ENABLE(fcgi, [  --enable-fcgi           build fcgi backend [[default=yes]]],, enable_fcgi=yes)
+AC_ARG_ENABLE(zmq,  [  --enable-zmq            build zmq backend  [[default=no]]],, enable_zmq=no)
+AC_ARG_ENABLE(zmq,  [  --enable-evhttp         build evhttp backend  [[default=no]]],, enable_evhttp=no)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h],, AC_MSG_ERROR(stdlib missing.))
@@ -31,7 +31,6 @@ AC_MSG_CHECKING(wheter FCGI backend should be built)
 if test "x$enable_fcgi" = "xyes"; then
 	AC_MSG_RESULT(yes)
 	AC_CHECK_HEADERS([fcgi_stdio.h],, AC_MSG_ERROR(fcgi_stdio missing.))
-	AM_LDFLAGS="$AM_LDFLAGS -lfcgi"
 else
 	AC_MSG_RESULT(no)
 fi
@@ -41,25 +40,9 @@ if test "x$enable_zmq" = "xyes"; then
 	AC_MSG_RESULT(yes)
 	AC_CHECK_HEADERS([zmq.h],, AC_MSG_ERROR(zmq missing.))
 	AC_CHECK_HEADERS([jansson.h],, AC_MSG_ERROR(jansson missing.))
-	AM_LDFLAGS="$AM_LDFLAGS -lzmq -ljansson"
 else
 	AC_MSG_RESULT(no)
 fi
-
-AC_MSG_CHECKING(wheter EVHTTP backend should be built)
-if test "x$enable_evhttp" = "xyes"; then
-	AC_MSG_RESULT(yes)
-	AC_CHECK_HEADERS([event2/http.h],, AC_MSG_ERROR(evhttp missing.))
-	AM_LDFLAGS="$AM_LDFLAGS -levent"
-else
-	AC_MSG_RESULT(no)
-fi
-
-AM_CONDITIONAL([FCGI], [test x$enable_fcgi = xtrue ])
-AM_CONDITIONAL([ZMQ], [test x$enable_zmq = xtrue ])
-AM_CONDITIONAL([EVHTTP], [test x$enable_evhttp = xtrue ])
-
-AC_SUBST([AM_LDFLAGS])
 
 AC_CONFIG_MACRO_DIR([m4])
 

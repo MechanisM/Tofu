@@ -71,6 +71,11 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 	zmq_pollitem_t items[1];
 	void *zmq_ctx = zmq_init(1);
 
+	if (!zmq_ctx) {
+		fprintf(stderr, "Err: couldn't create zmq context.\n");
+		exit(-1);
+	}
+
 	char *recv_spec  = ctx -> backend_opts[0];
 	char *recv_ident = ctx -> backend_opts[1];
 
@@ -78,7 +83,18 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 	char *send_ident = ctx -> backend_opts[3];
 
 	void *recv = zmq_socket(zmq_ctx, ZMQ_PULL);
+
+	if (!recv) {
+		fprintf(stderr, "Err: couldn't create zmq socket recv.\n");
+		exit(-1);
+	}
+
 	void *send = zmq_socket(zmq_ctx, ZMQ_PUB);
+
+	if (!send) {
+		fprintf(stderr, "Err: couldn't create zmq socket send.\n");
+		exit(-1);
+	}
 
 	zmq_connect(recv, recv_spec);
 	zmq_setsockopt(recv, ZMQ_IDENTITY, recv_ident, strlen(recv_ident));
@@ -107,7 +123,6 @@ void tofu_backend_zmq_loop(tofu_ctx_t *ctx) {
 			tofu_rep_free(rep);
 			tofu_req_free(req);
 
-			/*free(tnetstr);*/
 			zmq_msg_close(&msg);
 		}
 	}

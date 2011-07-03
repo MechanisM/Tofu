@@ -69,14 +69,14 @@ void tofu_backend_evhttp_loop(tofu_ctx_t *ctx) {
 	base = event_base_new();
 
 	if (!base) {
-		fprintf(stderr, "Couldn't create an event_base: exiting\n");
+		fprintf(stderr, "Err: couldn't create an event_base\n");
 		exit(-1);
 	}
 
 	http = evhttp_new(base);
 
 	if (!http) {
-		fprintf(stderr, "couldn't create evhttp. Exiting.\n");
+		fprintf(stderr, "Err: couldn't create evhttp.\n");
 		exit(-1);
 	}
 
@@ -85,7 +85,7 @@ void tofu_backend_evhttp_loop(tofu_ctx_t *ctx) {
 	handle = evhttp_bind_socket_with_handle(http, listen, port);
 
 	if (!handle) {
-		fprintf(stderr, "couldn't bind to port %d. Exiting.\n", port);
+		fprintf(stderr, "Err: couldn't bind to port %d.\n", port);
 		exit(-1);
 	}
 

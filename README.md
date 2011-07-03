@@ -12,8 +12,8 @@ API can be run on a wide variety of backend web servers with very little work on
 the app developer side.
 
 **Attention:** Tofu is currently in early development stage, which means that it
-is not really suitable for production code and that its API may change in the
-next future.
+is not really suitable for production code (not that the project is intended to
+be used in production anyway) and that its API may change in the next future.
 
 ## C? WTF?
 

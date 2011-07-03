@@ -33,6 +33,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "ctx.h"
@@ -43,20 +44,41 @@
 void tofu_loop(tofu_ctx_t *ctx) {
 	tofu_backend_t backend;
 
+#ifdef HAVE_FCGI_STDIO_H
 	extern tofu_backend_t tofu_backend_fcgi;
+#endif
+
+#ifdef HAVE_ZMQ_H
 	extern tofu_backend_t tofu_backend_zmq;
+#endif
+
+#ifdef HAVE_EVHTTP_H
 	extern tofu_backend_t tofu_backend_evhttp;
+#endif
 
 	switch (ctx -> backend) {
+#ifdef HAVE_FCGI_STDIO_H
 		case BACKEND_FCGI:
 			backend = tofu_backend_fcgi;
 			break;
+#endif
+
+#ifdef HAVE_ZMQ_H
 		case BACKEND_ZMQ:
 			backend = tofu_backend_zmq;
 			break;
+#endif
+
+#ifdef HAVE_EVHTTP_H
 		case BACKEND_EVHTTP:
 			backend = tofu_backend_evhttp;
 			break;
+#endif
+
+		default: {
+			fprintf(stderr, "Err: unknown backend\n");
+			exit(-1);
+		}
 	}
 
 	backend.loop(ctx);

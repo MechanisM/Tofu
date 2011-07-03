@@ -38,8 +38,8 @@
 #include <tofu/req.h>
 #include <tofu/handler.h>
 
-#define TOFU_BACKEND_FCGI	0
-#define TOFU_BACKEND_ZMQ	1
-#define TOFU_BACKEND_EVHTTP	2
+#define TOFU_FCGI	0
+#define TOFU_ZMQ	1
+#define TOFU_EVHTTP	2
 
 void tofu_loop(tofu_ctx_t *ctx);

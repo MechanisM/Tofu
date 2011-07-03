@@ -22,7 +22,7 @@ tofu_rep_t *mao_handler(tofu_req_t *req) {
 }
 
 int main() {
-	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_BACKEND_FCGI, NULL);
+	tofu_ctx_t *ctx = tofu_ctx_init(TOFU_FCGI, NULL);
 
 	tofu_handle_with(ctx, GET, "/lol/:ciao", lol_handler);
 	tofu_handle_with(ctx, GET, "/mao/:ciao", mao_handler);

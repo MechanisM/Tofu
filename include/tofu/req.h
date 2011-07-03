@@ -42,15 +42,16 @@ typedef struct {
 	int connid;
 	int method;
 	int error;
+	int body_len;
 
 	char *uri;
-	char *headers;
 	char *body;
 
 	void *params;
 } tofu_req_t;
 
-tofu_req_t *tofu_req_init(int connid, char *method, char *uri);
+tofu_req_t *tofu_req_init(int connid, char *method, char *uri, char *body, int body_len);
 void        tofu_req_free(tofu_req_t *req);
 
 char       *tofu_param(tofu_req_t *req, const char *name);
+char       *tofu_body(tofu_req_t *req, int *size);

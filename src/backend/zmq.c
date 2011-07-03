@@ -217,7 +217,7 @@ static tofu_req_t *mongrel2tofu(char *tnetstr) {
 	obj = json_object_get(root, "URI");
 	uri = json_string_value(obj);
 
-	req = tofu_req_init(connid, method, uri);
+	req = tofu_req_init(connid, method, uri, bdata(body), blength(body));
 
 	json_decref(root);
 	json_decref(obj);

@@ -59,10 +59,19 @@ tofu_backend_t tofu_backend_fcgi = {
 
 void tofu_backend_fcgi_loop(tofu_ctx_t *ctx) {
 	while (FCGI_Accept() >= 0) {
-		tofu_req_t *req = tofu_req_init(
+		char *body;
+		int body_len;
+		tofu_req_t *req;
+
+		body_len = getenv("CONTENT_LENGTH");
+		body = calloc(body_len + 1, 1);
+		fread(body, 1, body_len, stdin);
+
+		req = tofu_req_init(
 			0,
 			getenv("REQUEST_METHOD"),
-			getenv("REQUEST_URI")
+			getenv("REQUEST_URI"),
+			body, body_len
 		);
 
 		tofu_rep_t *rep = tofu_dispatch(ctx, req);

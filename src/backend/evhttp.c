@@ -35,9 +35,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <event2/event.h>
-#include <event2/http.h>
-#include <event2/buffer.h>
+#include <evhttp.h>
+#include <event.h>
 
 #include "ctx.h"
 #include "rep.h"
@@ -99,10 +98,13 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	list_node_t *iter;
 	tofu_ctx_t *ctx = (tofu_ctx_t *) arg;
 
-	struct evbuffer *evb = NULL;
+	struct evbuffer *evb = NULL, *evbody;
 	struct evhttp_uri *decoded = NULL;
 	char *uri = evhttp_request_get_uri(evreq);
 	char *method = NULL, *path, *decoded_path;
+
+	char *body;
+	size_t body_len;
 
 	switch (evhttp_request_get_command(evreq)) {
 		case EVHTTP_REQ_GET:
@@ -125,7 +127,12 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	path = evhttp_uri_get_path(decoded);
 	decoded_path = evhttp_uridecode(path, 0, NULL);
 
-	req = tofu_req_init(0, method, decoded_path);
+	evbody = evhttp_request_get_input_buffer(evreq);
+	body_len = evbuffer_get_length(evbody);
+	body = calloc(body_len + 1, 1);
+	evbuffer_copyout(evbody, body, body_len);
+
+	req = tofu_req_init(0, method, decoded_path, body, body_len);
 	rep = tofu_dispatch(ctx, req);
 
 	evb = evbuffer_new();
@@ -148,6 +155,7 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 	evhttp_uri_free(decoded);
 	evbuffer_free(evb);
 	free(decoded_path);
+	free(body);
 
 	tofu_rep_free(rep);
 	tofu_req_free(req);

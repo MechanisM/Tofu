@@ -43,7 +43,7 @@
 #include "utils/list.h"
 #include "utils/common.h"
 
-tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
+tofu_req_t *tofu_req_init(int connid, char *method, char *uri, char *body, int body_len) {
 	tofu_req_t *req = malloc(sizeof(tofu_req_t));
 
 	req -> error  = 0;
@@ -67,6 +67,9 @@ tofu_req_t *tofu_req_init(int connid, char *method, char *uri) {
 		req -> method = DELETE;
 	else
 		req -> error = 400;
+
+	req -> body     = strdup(body);
+	req -> body_len = body_len;
 
 	return req;
 }
@@ -110,4 +113,9 @@ char *tofu_param(tofu_req_t *req, const char *name) {
 	}
 
 	return "";
+}
+
+char *tofu_body(tofu_req_t *req, int *size) {
+	*size = req -> body_len;
+	return req -> body;
 }

@@ -33,7 +33,7 @@ INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/include/tofu
 libtofu_la_CFLAGS = -Wall -O3 -fomit-frame-pointer
 libtofu_la_LDFLAGS = -version-info @LTVER@  -lpcre -lfcgi -lzmq -ljansson -levent
 
-bin_PROGRAMS = example_evhttp example_fcgi example_zmq example_errors example_status example_hi
+bin_PROGRAMS = example_evhttp example_fcgi example_zmq example_errors example_status example_hi example_post
 
 example_evhttp_LDADD = libtofu.la
 example_evhttp_SOURCES = eg/example-evhttp.c
@@ -52,3 +52,6 @@ example_status_SOURCES = eg/example-status.c
 
 example_hi_LDADD = libtofu.la
 example_hi_SOURCES = eg/example-hi.c
+
+example_post_LDADD = libtofu.la
+example_post_SOURCES = eg/example-post.c

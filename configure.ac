@@ -50,5 +50,11 @@ AC_CONFIG_MACRO_DIR([m4])
 LTVER="0:0:0"
 AC_SUBST(LTVER)
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	eg/Makefile
+	src/Makefile
+	include/Makefile
+])
+
 AC_OUTPUT

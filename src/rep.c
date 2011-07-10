@@ -59,7 +59,16 @@ void tofu_rep_free(tofu_rep_t *rep) {
 	if (rep == NULL)
 		return;
 
-	list_destroy(rep -> chunks);
+	list_reverse_foreach_safe(iter, safe, rep -> chunks) {
+		iter -> prev -> next = iter -> next;
+		iter -> next -> prev = iter -> prev;
+
+		if (!list_is_empty(iter)) {
+			bstring *chunk = iter -> value;
+			bdestroy(chunk);
+			free(iter);
+		}
+	}
 
 	list_reverse_foreach_safe(iter, safe, rep -> headers) {
 		iter -> prev -> next = iter -> next;
@@ -68,8 +77,8 @@ void tofu_rep_free(tofu_rep_t *rep) {
 		if (!list_is_empty(iter)) {
 			pair_t *header = iter -> value;
 
-			free(header -> name);
-			free(header -> value);
+			bdestroy(header -> name);
+			bdestroy(header -> value);
 
 			free(header);
 			free(iter);
@@ -81,7 +90,7 @@ void tofu_rep_free(tofu_rep_t *rep) {
 }
 
 void tofu_write(tofu_rep_t *rep, const char *chunk) {
-	list_insert_tail(rep -> chunks, (void *) chunk);
+	list_insert_tail(rep -> chunks, (void *) cstr2bstr(chunk));
 }
 
 void tofu_writef(tofu_rep_t *rep, const char *fmt, ...) {
@@ -90,16 +99,14 @@ void tofu_writef(tofu_rep_t *rep, const char *fmt, ...) {
 
 	bvformata(ret, b , fmt, fmt);
 
-	list_insert_tail(rep -> chunks, (void *) strdup(bdata(b)));
-
-	bdestroy(b);
+	list_insert_tail(rep -> chunks, (void *) b);
 }
 
 void tofu_head(tofu_rep_t *rep, const char *field, const char *value) {
 	pair_t *header = malloc(sizeof(pair_t));
 
-	header -> name  = (void *) strdup(field);
-	header -> value = (void *) strdup(value);
+	header -> name  = (void *) cstr2bstr(field);
+	header -> value = (void *) cstr2bstr(value);
 
 	list_insert_tail(rep -> headers, (void *) header);
 }

@@ -45,6 +45,8 @@
 
 #include "../backend.h"
 
+#include "../bstring/bstrlib.h"
+
 #include "../utils/list.h"
 #include "../utils/http.h"
 #include "../utils/common.h"
@@ -139,15 +141,18 @@ static void tofu_backend_evhttp_cb(struct evhttp_request *evreq, void *arg) {
 
 	list_foreach(iter, rep -> headers) {
 		pair_t *header = iter -> value;
+		bstring name = header -> name;
+		bstring value = header -> value;
+
 		evhttp_add_header(
 			evhttp_request_get_output_headers(evreq),
-			header -> name, header -> value
+			bdata(name), bdata(value)
 		);
 	}
 
 	list_foreach(iter, rep -> chunks) {
-		const char *chunk = iter -> value;
-		evbuffer_add(evb, chunk, strlen(chunk));
+		bstring chunk = iter -> value;
+		evbuffer_add(evb, bdata(chunk), blength(chunk));
 	}
 
 	evhttp_send_reply(evreq, rep -> status, httpmsg(rep -> status), evb);

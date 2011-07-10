@@ -43,6 +43,8 @@
 
 #include "../backend.h"
 
+#include "../bstring/bstrlib.h"
+
 #include "../utils/list.h"
 #include "../utils/http.h"
 #include "../utils/common.h"
@@ -93,13 +95,16 @@ void tofu_backend_fcgi_send(tofu_rep_t *rep) {
 
 	list_foreach(iter, rep -> headers) {
 		pair_t *header = iter -> value;
-		printf("%s: %s\n", header -> name, header -> value);
+		bstring name = header -> name;
+		bstring value = header -> value;
+
+		printf("%s: %s\n", bdata(name), bdata(value));
 	}
 
 	printf("\n");
 
 	list_foreach(iter, rep -> chunks) {
-		const char *chunk = iter -> value;
-		printf(chunk);
+		bstring chunk = iter -> value;
+		printf(bdata(chunk));
 	}
 }

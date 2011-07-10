@@ -80,4 +80,6 @@ static char *httpmsg(int status) {
 		case 504: return "Gateway Timeout";
 		case 505: return "HTTP Version Not Supported";
 	}
+
+	return "MSG";
 }

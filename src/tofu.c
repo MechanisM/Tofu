@@ -36,6 +36,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
+
 #include "ctx.h"
 #include "rep.h"
 #include "req.h"

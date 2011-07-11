@@ -12,7 +12,7 @@ EXTRA_libtofu_la_SOURCES = 	\
 	backend/zmq.c		\
 	backend/evhttp.c
 
-libtofu_la_CFLAGS = -Wall -O3 -fomit-frame-pointer
+libtofu_la_CFLAGS = -Wall -O3
 libtofu_la_LDFLAGS = -version-info @LTVER@  -lpcre @BACKEND_LDFLAGS@
 libtofu_la_LIBADD = @BACKEND_DEPS@
 libtofu_la_DEPENDENCIES = @BACKEND_DEPS@

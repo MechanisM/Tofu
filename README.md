@@ -94,6 +94,22 @@ During the initialization phase the application has also to define and initializ
 a Tofu context (`tofu_ctx_t`) which holds all the information needed to run the
 application. The app backend can be chosen in this phase.
 
+## EXTRA LIBRARIES
+
+Tofu does not provide any advanced functionalities that may be useful when
+developing web applications. Here's a list of useful external libraries to
+extend your Tofu applications (or any other software written in C/C++):
+
+ * [houdini](https://github.com/tanoku/houdini) is a simple API for escaping and unescaping text for the web.
+ * [amaca](https://github.com/AlexBio/Amaca) is a tiny template engine which natively supports Lua scripting.
+ * [ctpl](http://ctpl.tuxfamily.org/) is another template library written in C.
+ * [jansson](https://github.com/akheron/jansson) is a C library for encoding, decoding and manipulating JSON data.
+ * [libmarkdown](https://github.com/Orc/discount) is an implementation of John Gruber's Markdown markup language.
+ * [hiredis](https://github.com/antirez/hiredis) is a minimalistic C client library for the Redis database.
+ * [libmongo-client](https://github.com/algernon/libmongo-client) is an alternative C driver for MongoDB.
+
+If you know any other library, please let me know.
+
 ## DEPENDENCIES
 
  * `pcre`

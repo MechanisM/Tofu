@@ -11,15 +11,9 @@ Tofu is web server agnostic, which means that applications written using the Tof
 API can be run on a wide variety of backend web servers with very little work on
 the app developer side.
 
-**Attention:** Tofu is currently in early development stage, which means that it
-is not really suitable for production code (not that the project is intended to
-be used in production anyway) and that its API may change in the next future.
-
-## C? WTF?
-
-C is a really fun language to develop with once you get used to it. Software
-written in C is also (most of the times) pretty fast and with low memory footprint
-which makes the language ideal for performance-critical environments.
+**Attention:** Tofu is experimental software, which means that it is not really
+suitable for production code (not that the project is intended to be used in
+production anyway).
 
 ## GETTING STARTED
 
@@ -55,15 +49,19 @@ $ cc -o hi hi.c -ltofu
 $ ./hi
 ~~~~
 
-then visit [http://0.0.0.0:8080/hi](http://0.0.0.0:8080/hi).
+then visit [http://0.0.0.0:8080/hi](http://0.0.0.0:8080/hi) with your browser.
 
 ## OVERVIEW
 
-A Tofu web application consists in one or more route handlers, which, basically,
-are functions that take as argument a Tofu request (`tofu_req_t`) and return a
-Tofu response (`tofu_rep_t`). Every route handler has to be registered and
-associated with an HTTP method (`GET` `POST` ...) and a route pattern, with the
-`tofu_handle_with()` function:
+A Tofu web application consists in a Tofu context and one or more route handlers.
+On startup he application has to initialize a Tofu context (`tofu_ctx_t`) which
+holds all the information needed to run the application. The backend to be used
+by the application can be chosen in this phase.
+
+The handlers are functions that take as only argument a Tofu request (`tofu_req_t`)
+and return a Tofu response (`tofu_rep_t`). Every handler has to be registered
+and associated with an HTTP method (`GET` `POST` ...) and a route pattern using
+the `tofu_handle_with()` function:
 
 ~~~~ c
 tofu_handle_with(ctx, GET, "/route/:param", handler_function);
@@ -73,11 +71,13 @@ A route pattern can contain one or more tokens (words prefixed by `:`). Each tok
 found in a route pattern is then included in the Tofu request so that it can be
 accessed by the route handler. For example the route `/page/:name` is matched
 against the `/page/index` URI, and the corrispondent handler can fetch the `name`
-paramenter with the `tofu_param()` function:
+paramenter using the `tofu_param()` function:
 
 ~~~~ c
 char *param = tofu_param(req, "name");
 ~~~~
+
+The `param` variable will contain the string `"index"`.
 
 An handler can be also defined to only handle execution errors, for example `404`
 or `500` errors. To register an error handler the function `tofu_rescue_with()`
@@ -89,10 +89,6 @@ tofu_rescue_with(ctx, 404, err404_handler_func);
 
 By default Tofu can handle some errors (like 404s or 500s) if no other handler
 has been defined in the application.
-
-During the initialization phase the application has also to define and initialize
-a Tofu context (`tofu_ctx_t`) which holds all the information needed to run the
-application. The app backend can be chosen in this phase.
 
 ## EXTRA LIBRARIES
 

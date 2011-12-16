@@ -7,10 +7,10 @@ tofu_rep_t *eg_handler(tofu_req_t *req) {
 	char *body = tofu_body(req, &body_len);
 
 	tofu_head(rep, "Content-Type", "text/html");
-	tofu_write(rep, "<!DOCTYPE html>\n<head><title>Ciao</title></head>\n");
+	tofu_write(rep, "<!DOCTYPE html>\n<head><title>POST</title></head>\n");
 
 	if (body_len > 0)
-		tofu_writef(rep, "<body>mao %s</body>\n", body);
+		tofu_writef(rep, "<body>POST request: %s</body>\n", body);
 	else
 		tofu_write(rep, "<body>no body</body>\n");
 

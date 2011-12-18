@@ -68,8 +68,8 @@ tofu_handle_with(ctx, GET, "/route/:param", handler_function);
 A route pattern can contain one or more tokens (words prefixed by `:`). Each token
 found in a route pattern is then included in the Tofu request so that it can be
 accessed by the route handler. For example the route `/page/:name` is matched
-against the `/page/index` URI, and the corrispondent handler can fetch the `name`
-paramenter using the `tofu_param()` function:
+against the `/page/index` request, and the corrispondent handler can fetch the
+`name` paramenter using the `tofu_param()` function:
 
 ~~~~ c
 char *param = tofu_param(req, "name");

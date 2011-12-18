@@ -1,8 +1,6 @@
 Tofu
 ====
 
-![status](http://stillmaintained.com/AlexBio/Tofu.png)
-
 **Tofu** is a framework for building web application in C with as minimal effort
 as possible, allowing simple web applications to be created rapidly and with few
 lines of C code.

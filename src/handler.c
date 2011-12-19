@@ -153,6 +153,9 @@ static tofu_rep_t *default_error_handler(tofu_req_t *req, int error) {
 		case 500:
 			tofu_write(rep, "<!DOCTYPE html><head><title>Error!</title></head><body><h1>500 - Internal server error!</h1></body></html>\n");
 			break;
+		default:
+			tofu_write(rep, "<!DOCTYPE html><head><title>Error!</title></head><body><h1>An error occurred!</h1></body></html>\n");
+			break;
 	}
 
 	return rep;

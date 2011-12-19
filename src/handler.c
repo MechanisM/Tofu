@@ -113,6 +113,9 @@ tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req) {
 	if (rep == NULL)
 		rep = rescu_from_error(ctx, req, 404);
 
+	if ((rep -> status >= 400) && (rep -> status < 600))
+		rep = rescu_from_error(ctx, req, rep -> status);
+
 ret:
 	rep -> connid = req -> connid;
 	return rep;

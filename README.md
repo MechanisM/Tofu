@@ -87,7 +87,14 @@ has to be used:
 tofu_rescue_with(ctx, 404, err404_handler_func);
 ~~~~
 
-By default Tofu can handle some errors (like 404s or 500s) if no other handler
+The error handlers get invoked in various situations:
+
+ * when there is an error in the backend (error 500)
+ * when no handler is defined to handle a specific request (error 404)
+ * when an handler returns a Tofu response with status in the range
+   `400 <= x < 600` (whatever error is set).
+
+By default Tofu can handle some errors (i.e. 404s or 500s) if no other handler
 has been defined in the application.
 
 ## EXTRA LIBRARIES

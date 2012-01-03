@@ -11,9 +11,7 @@ Tofu is web server agnostic, which means that applications written using the Tof
 API can be run on a wide variety of backend web servers with very little work on
 the app developer side.
 
-**Attention:** Tofu is experimental software, which means that it is not really
-suitable for production code (not that the project is intended to be used in
-production anyway).
+**Attention:** Tofu is highly experimental software, take it as a proof-of-concept.
 
 ## GETTING STARTED
 
@@ -107,7 +105,7 @@ extend your Tofu applications (or any other software written in C/C++):
  * [amaca](https://github.com/AlexBio/Amaca) is a tiny template engine which natively supports Lua scripting.
  * [ctpl](http://ctpl.tuxfamily.org/) is another template library written in C.
  * [jansson](https://github.com/akheron/jansson) is a C library for encoding, decoding and manipulating JSON data.
- * [libmarkdown](https://github.com/Orc/discount) is an implementation of John Gruber's Markdown markup language.
+ * [discount](https://github.com/Orc/discount) is an implementation of John Gruber's Markdown markup language.
  * [hiredis](https://github.com/antirez/hiredis) is a minimalistic C client library for the Redis database.
  * [libmongo-client](https://github.com/algernon/libmongo-client) is an alternative C driver for MongoDB.
 

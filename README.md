@@ -3,7 +3,7 @@ Tofu
 
 ![status](http://stillmaintained.com/AlexBio/Tofu.png)
 
-**Tofu** is a framework for building web application in C with as minimal effort
+**Tofu** is a framework for building web applications in C with as minimal effort
 as possible, allowing simple web applications to be created rapidly and with few
 lines of C code.
 
@@ -52,7 +52,7 @@ then visit [http://0.0.0.0:8080/hi](http://0.0.0.0:8080/hi) with your browser.
 ## OVERVIEW
 
 A Tofu web application consists in a Tofu context and one or more route handlers.
-On startup he application has to initialize a Tofu context (`tofu_ctx_t`) which
+On startup the application has to initialize a Tofu context (`tofu_ctx_t`) which
 holds all the information needed to run the application. The backend to be used
 by the application can be chosen in this phase.
 
@@ -68,7 +68,7 @@ tofu_handle_with(ctx, GET, "/route/:param", handler_function);
 A route pattern can contain one or more tokens (words prefixed by `:`). Each token
 found in a route pattern is then included in the Tofu request so that it can be
 accessed by the route handler. For example the route `/page/:name` is matched
-against the `/page/index` request, and the corrispondent handler can fetch the
+against the `/page/index` request, and the correspondent handler can fetch the
 `name` paramenter using the `tofu_param()` function:
 
 ~~~~ c

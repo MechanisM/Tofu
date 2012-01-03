@@ -33,7 +33,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _TOFU_HANDLER_H_
+#define _TOFU_HANDLER_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void tofu_handle_with(tofu_ctx_t *ctx, int method, const char *route, tofu_rep_t *(*callback)(tofu_req_t *req));
 void tofu_rescue_with(tofu_ctx_t *ctx, int erorr, tofu_rep_t *(*callback)(tofu_req_t *req));
 
 tofu_rep_t *tofu_dispatch(tofu_ctx_t *ctx, tofu_req_t *req);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif

@@ -33,6 +33,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _TOFU_CTX_H_
+#define _TOFU_CTX_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	int   backend;
 	void *handlers;
@@ -42,3 +49,9 @@ typedef struct {
 
 tofu_ctx_t *tofu_ctx_init();
 void        tofu_ctx_free(tofu_ctx_t *ctx);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif

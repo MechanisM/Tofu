@@ -33,6 +33,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _TOFU_REP_H_
+#define _TOFU_REP_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	int connid;
 	int status;
@@ -48,3 +55,9 @@ void tofu_status(tofu_rep_t *rep, int status);
 void tofu_write(tofu_rep_t *rep, const char *s);
 void tofu_writef(tofu_rep_t *rep, const char *fmt, ...);
 void tofu_head(tofu_rep_t *rep, const char *field, const char *value);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif

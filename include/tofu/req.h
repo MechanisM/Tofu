@@ -33,6 +33,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _TOFU_REQ_H_
+#define _TOFU_REQ_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GET	0
 #define POST	1
 #define PUT	2
@@ -55,3 +62,9 @@ void        tofu_req_free(tofu_req_t *req);
 
 char       *tofu_param(tofu_req_t *req, const char *name);
 char       *tofu_body(tofu_req_t *req, int *size);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif

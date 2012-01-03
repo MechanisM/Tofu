@@ -33,13 +33,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _TOFU_H_
+#define _TOFU_H_
+
 #include <tofu/ctx.h>
 #include <tofu/rep.h>
 #include <tofu/req.h>
 #include <tofu/handler.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define TOFU_FCGI	0
 #define TOFU_ZMQ	1
 #define TOFU_EVHTTP	2
 
 void tofu_loop(tofu_ctx_t *ctx);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif

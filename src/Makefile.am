@@ -13,6 +13,9 @@ EXTRA_libtofu_la_SOURCES = 	\
 	backend/evhttp.c
 
 libtofu_la_CFLAGS = -Wall -O3
-libtofu_la_LDFLAGS = -version-info @LTVER@  -lpcre @BACKEND_LDFLAGS@
-libtofu_la_LIBADD = @BACKEND_DEPS@
+libtofu_la_LDFLAGS = -export-symbols-regex '^tofu_'	\
+	-version-info 0:0:0 				\
+	@BACKEND_LDFLAGS@
+
+libtofu_la_LIBADD = @BACKEND_DEPS@ -lpcre
 libtofu_la_DEPENDENCIES = @BACKEND_DEPS@
